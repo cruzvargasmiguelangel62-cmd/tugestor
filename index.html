@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    
+    <title>TuGestor - Cotizador Profesional</title>
+    <meta name="description" content="Genera cotizaciones profesionales de forma rápida y sencilla con TuGestor.">
+    <meta name="author" content="TuGestor">
+    
+    <meta property="og:title" content="TuGestor - Cotizador Profesional" />
+    <meta property="og:description" content="Herramienta profesional para gestión y cotizaciones." />
+    <meta property="og:image" content="https://cdn-icons-png.flaticon.com/512/3524/3524636.png" />
+    <meta property="og:type" content="website" />
+
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="manifest" href="/manifest.json" />
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TuGestor">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3524/3524636.png" />
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3524/3524636.png" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Configuración opcional de Tailwind para extender el tema si lo necesitas a futuro
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: '#0f172a',
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      /* Ocultar barra de desplazamiento manteniendo funcionalidad */
+      html, body {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE y Edge */
+      }
+      
+      /* Webkit (Chrome, Safari, Opera) */
+      ::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+        display: none;
+        background: transparent;
+      }
+      
+      /* Clase utilitaria explícita */
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+
+      /* Ajustes de impresión */
+      @media print {
+        @page { margin: 0; size: auto; }
+        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      }
+    </style>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react-dom": "https://esm.sh/react-dom@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "vite": "https://esm.sh/vite@^7.3.1",
+        "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+        "jspdf": "https://esm.sh/jspdf@^4.0.0",
+        "dexie": "https://esm.sh/dexie@^4.2.1",
+        "dexie-react-hooks": "https://esm.sh/dexie-react-hooks@^4.2.0",
+        "html2canvas": "https://esm.sh/html2canvas@^1.4.1",
+        "vite-plugin-static-copy": "https://esm.sh/vite-plugin-static-copy@^3.1.4"
+      }
+    }
+    </script>
+  </head>
+  
+  <body class="bg-gray-50 text-slate-800 antialiased selection:bg-indigo-100 selection:text-indigo-900 overscroll-none">
+    
+    <noscript>Necesitas habilitar JavaScript para ejecutar esta aplicación.</noscript>
+    
+    <div id="root"></div>
+
+    <script type="module" src="/src/index.tsx"></script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', async () => {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            console.log('SW registrado con éxito:', registration.scope);
+          } catch (error) {
+            console.error('Fallo en el registro del SW:', error);
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
