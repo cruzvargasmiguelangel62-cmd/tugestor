@@ -96,8 +96,8 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
         ))}
       </datalist>
 
-      {/* Header - Responsive - Sin padding lateral en móvil */}
-      <div className="sticky top-0 lg:relative bg-white z-30 px-4 sm:px-6 lg:px-0 py-3 lg:py-0 mb-4 lg:mb-6 border-b lg:border-b-0 border-slate-100 flex justify-between items-center lg:block">
+      {/* Header - Responsive - Con espacio para el header fijo en móvil */}
+      <div className="sticky top-[60px] sm:top-[70px] lg:top-0 lg:relative bg-white z-30 px-4 sm:px-6 lg:px-0 py-3 lg:py-0 mb-4 lg:mb-6 border-b lg:border-b-0 border-slate-100 flex justify-between items-center lg:block">
         <div className="flex items-center justify-between w-full lg:w-auto lg:mb-6">
           <button onClick={() => setView('home')} className="p-2 -ml-2 lg:hidden hover:bg-slate-100 rounded-lg transition-colors">
             <ChevronLeft size={24}/>
@@ -117,7 +117,7 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
       </div>
       
       {/* Main Content - Responsive Grid Layout - Con padding solo en móvil */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-0">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-0 pt-2 sm:pt-0">
         {/* Left Column - Form Fields */}
         <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           <section className="bg-white p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm">
@@ -387,10 +387,10 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
       </div>
 
       {/* Mobile save action (visible solo en pantallas pequeñas) */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-slate-200 p-4 safe-bottom z-40 shadow-2xl">
-         <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold text-slate-400 uppercase">Total Final</span>
-            <span className="text-xl sm:text-2xl font-bold text-slate-900">{money(finalTotal)}</span>
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-slate-200 px-4 sm:px-6 py-3 safe-bottom z-40 shadow-2xl">
+         <div className="flex justify-between items-center gap-4 mb-3 max-w-full">
+            <span className="text-xs font-bold text-slate-400 uppercase shrink-0">Total Final</span>
+            <span className="text-xl sm:text-2xl font-bold text-slate-900 text-right flex-shrink-0">{money(finalTotal)}</span>
          </div>
          <button 
            onClick={handleSave} 
