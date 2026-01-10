@@ -24,7 +24,7 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
     const updateScale = () => {
       const container = containerRef.current;
       const available = container ? container.clientWidth - 24 : window.innerWidth - 24;
-      const newScale = Math.max(0.35, Math.min(1, available / 816));
+      const newScale = Math.max(0.35, Math.min(1.2, available / 816));
       setScale(newScale);
     };
 

@@ -7,7 +7,7 @@ import { ViewState } from '../types';
 export const Screen: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => (
   <div className="min-h-screen bg-gray-200 flex justify-center items-start">
     <main className={`
-      w-full max-w-md min-h-[100dvh] bg-gray-50 text-slate-800 font-sans 
+      w-full max-w-md lg:max-w-5xl min-h-[100dvh] bg-gray-50 text-slate-800 font-sans 
       pb-28 pt-[env(safe-area-inset-top)] 
       relative shadow-2xl overflow-x-hidden selection:bg-indigo-100 selection:text-indigo-900
       ${className}
@@ -53,7 +53,7 @@ interface NavBarProps {
 // Mejora: Alineación centrada en desktop también
 export const NavBar: React.FC<NavBarProps> = ({ view, setView }) => (
   <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 pointer-events-none">
-    <nav className="w-full max-w-md bg-white/90 backdrop-blur-md border-t border-slate-200/60 px-2 py-2 flex justify-around items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)] pointer-events-auto">
+    <nav className="w-full max-w-md lg:max-w-5xl bg-white/90 backdrop-blur-md border-t border-slate-200/60 px-2 py-2 flex justify-around items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)] pointer-events-auto">
       <NavBtn icon={<Home size={22} />} label="Inicio" active={view === 'home'} onClick={() => setView('home')} />
       <NavBtn icon={<Book size={22} />} label="Catálogo" active={view === 'catalog'} onClick={() => setView('catalog')} />
       
