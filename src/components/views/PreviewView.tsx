@@ -19,13 +19,22 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
   const [showShareModal, setShowShareModal] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scale, setScale] = useState<number>(0.8);
+  const [containerMaxWidth, setContainerMaxWidth] = useState<number | null>(null);
 
   useEffect(() => {
     const updateScale = () => {
       const container = containerRef.current;
-      const available = container ? container.clientWidth - 24 : window.innerWidth - 24;
-      const newScale = Math.max(0.35, Math.min(1.2, available / 816));
-      setScale(newScale);
+      const available = container ? container.clientWidth - 48 : window.innerWidth - 48;
+
+      if (available < 816) {
+        const newScale = Math.max(0.35, Math.min(1, available / 816));
+        setScale(newScale);
+        setContainerMaxWidth(816);
+      } else {
+        // On larger screens don't scale up the print visual — let it grow to a max width
+        setScale(1);
+        setContainerMaxWidth(Math.min(1200, available));
+      }
     };
 
     updateScale();
@@ -245,9 +254,10 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
         <div
           className="bg-white shadow-xl relative"
           style={{
-           width: 816,
+           width: '100%',
+           maxWidth: containerMaxWidth || 816,
            minHeight: 1056,
-           transform: `scale(${scale})`,
+           transform: scale < 1 ? `scale(${scale})` : undefined,
            transformOrigin: 'top center'
           }}
         >
