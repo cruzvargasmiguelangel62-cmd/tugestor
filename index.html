@@ -96,16 +96,24 @@
 
     <script type="module" src="/src/index.tsx"></script>
 
-    <script>
+    <script type="module">
+      // Only register service worker in production / when not running on localhost/dev port.
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', async () => {
-          try {
-            const registration = await navigator.serviceWorker.register('/sw.js');
-            console.log('SW registrado con éxito:', registration.scope);
-          } catch (error) {
-            console.error('Fallo en el registro del SW:', error);
-          }
-        });
+        const host = location.hostname;
+        const isLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
+        if (!isLocal) {
+          window.addEventListener('load', async () => {
+            try {
+              const registration = await navigator.serviceWorker.register('/sw.js');
+              console.log('SW registrado con éxito:', registration.scope);
+            } catch (error) {
+              console.error('Fallo en el registro del SW:', error);
+            }
+          });
+        } else {
+          // In dev, ensure any previous SW is unregistered to avoid intercepting Vite requests.
+          navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+        }
       }
     </script>
   </body>
