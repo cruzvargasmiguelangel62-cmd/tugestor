@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
-import { Profile, CatalogItem, Quote, ViewState } from './types';
+import { Profile, CatalogItem, Quote, ViewState, QuoteStatus } from './types';
 import { generateId, calculateSubtotal } from './utils';
+import { DEFAULT_PROFILE } from './constants';
 
 // Views
 import HomeView from './components/views/HomeView';
@@ -17,18 +18,6 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
-
-// Objeto por defecto para el perfil (Single Source of Truth)
-const DEFAULT_PROFILE: Profile = {
-  id: 'main',
-  name: 'Mi Negocio',
-  slogan: 'Servicios Generales',
-  phone: '',
-  color: '#1e293b',
-  logo: null,
-  nextFolio: 1,
-  terms: ''
-};
 
 const App = () => {
   const [view, setView] = useState<ViewState>('home'); 
@@ -98,7 +87,7 @@ const App = () => {
              icon,
              vibrate: [200, 100, 200],
              tag: 'pending-quotes' // Tag evita notificaciones duplicadas en la barra
-           });
+           } as any);
         } else {
            new Notification(title, { body, icon });
         }
@@ -182,7 +171,7 @@ const App = () => {
   };
 
   const toggleQuoteStatus = async (quote: Quote) => {
-    const newStatus = quote.status === 'pendiente' ? 'pagada' : 'pendiente';
+    const newStatus: QuoteStatus = quote.status === 'pendiente' ? 'pagada' : 'pendiente';
     const updatedQuote = { ...quote, status: newStatus };
     
     try {

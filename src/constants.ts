@@ -1,4 +1,4 @@
-import { Template, CatalogItem } from './types';
+import { Template, CatalogItem, Profile } from './types';
 
 export const TEMPLATES_DB: Template[] = [
   // --- PLOMERÍA ---
@@ -138,3 +138,14 @@ export const DEFAULT_CATALOG: CatalogItem[] = [
   { id: '1', category: 'General', desc: "Mano de Obra (Hora)", unit: 'hr', price: 200 },
   { id: '2', category: 'General', desc: "Visita Diagnóstico", unit: 'srv', price: 350 }
 ];
+
+export const DEFAULT_PROFILE: Profile = {
+  id: 'main',
+  name: 'Mi Negocio',
+  slogan: 'Servicios Generales',
+  phone: '',
+  color: '#1e293b',
+  logo: null,
+  nextFolio: 1,
+  terms: ''
+};
