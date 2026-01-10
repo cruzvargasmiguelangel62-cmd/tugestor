@@ -9,11 +9,11 @@ interface SettingsViewProps {
   setView: (view: ViewState) => void;
   profile: Profile;
   setProfile: (profile: Profile) => void; 
-  installPrompt?: any;
+  installAvailable?: boolean;
   onInstall?: () => void;
 }
 
-const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, installPrompt, onInstall }) => {
+const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, installAvailable, onInstall }) => {
   const [notificationStatus, setNotificationStatus] = useState<NotificationPermission>('default');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -152,7 +152,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
   const colors = ['#000000', '#1e293b', '#2563eb', '#dc2626', '#16a34a', '#d97706'];
 
   const handleInstallClick = () => {
-    if (installPrompt && onInstall) {
+    if (installAvailable && onInstall) {
       onInstall();
     } else {
       alert("Para instalar la App:\n\n1. 🤖 Android: Abre el menú del navegador (⋮) y selecciona 'Instalar aplicación' o 'Agregar a la pantalla de inicio'.\n\n2. 🍎 iOS (iPhone): Toca el botón Compartir (cuadrado con flecha) y selecciona 'Agregar al inicio'.\n\n3. 💻 PC: Busca el icono (+) en la barra de direcciones.");
@@ -160,42 +160,61 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
   };
 
   return (
-    <Screen>
-       <div className="sticky top-0 bg-white z-20 px-5 py-4 border-b border-slate-100 flex justify-between items-center">
-         <h1 className="font-bold text-xl">Perfil y Ajustes</h1>
-         <button onClick={async () => { if(confirm('¿Reiniciar toda la aplicación? Se borrarán todos los datos.')) { await (db as any).delete(); window.location.reload(); }}} className="text-red-400 text-xs font-bold">Reset Fabrica</button>
+    <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
+       {/* Header - Con padding solo en móvil */}
+       <div className="mb-4 sm:mb-6 lg:mb-8 flex justify-between items-center px-4 sm:px-0">
+         <h1 className="font-bold text-xl sm:text-2xl lg:text-3xl text-slate-800">Perfil y Ajustes</h1>
+         <button 
+           onClick={async () => { 
+             if(confirm('¿Reiniciar toda la aplicación? Se borrarán todos los datos.')) { 
+               await (db as any).delete(); 
+               window.location.reload(); 
+             }
+           }} 
+           className="text-red-500 text-xs sm:text-sm font-bold hover:text-red-700 transition-colors"
+         >
+           Reset Fábrica
+         </button>
        </div>
-       <div className="p-5 space-y-5">
+       <div className="space-y-4 sm:space-y-6 lg:grid lg:grid-cols-2 lg:gap-6 lg:space-y-0 px-4 sm:px-0">
           
-          <button 
-            onClick={handleInstallClick}
-            className="w-full bg-slate-900 text-white p-4 rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-slate-300 active:scale-95 transition-all"
-          >
-            <div className="bg-white/20 p-2 rounded-xl">
-              <Download size={24} />
-            </div>
-            <div className="text-left">
-              <div className="font-bold text-sm">Instalar Aplicación</div>
-              <div className="text-[10px] opacity-80">
-                {installPrompt ? 'Toca para instalar ahora' : 'Ver instrucciones de instalación'}
+          <div className="lg:col-span-2">
+            <button 
+              onClick={handleInstallClick}
+              className="w-full bg-slate-900 text-white p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl flex items-center justify-center gap-4 shadow-lg hover:bg-slate-800 active:scale-95 transition-all"
+            >
+              <div className="bg-white/20 p-3 rounded-xl">
+                <Download size={24} className="sm:w-6 sm:h-6" />
               </div>
-            </div>
-          </button>
+              <div className="text-left flex-1">
+                <div className="font-bold text-sm sm:text-base lg:text-lg">Instalar Aplicación</div>
+                <div className="text-xs sm:text-sm opacity-80">
+                  {installAvailable ? 'Toca para instalar ahora' : 'Ver instrucciones de instalación'}
+                </div>
+              </div>
+            </button>
+          </div>
 
           {/* Backup Section */}
-          <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
-             <div className="flex items-center gap-2 mb-3">
-                <Cloud size={18} className="text-indigo-600"/>
-                <span className="font-bold text-sm text-slate-700">Copia de Seguridad</span>
+          <div className="bg-white border border-slate-200 p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl shadow-sm">
+             <div className="flex items-center gap-2 mb-4">
+                <Cloud size={20} className="text-indigo-600 sm:w-5 sm:h-5"/>
+                <span className="font-bold text-sm sm:text-base text-slate-700">Copia de Seguridad</span>
              </div>
-             <div className="grid grid-cols-2 gap-3">
-                <button onClick={handleExportBackup} className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex flex-col items-center gap-2 active:bg-slate-100">
-                   <FileJson size={20} className="text-slate-500"/>
-                   <span className="text-xs font-bold text-slate-600">Exportar Datos</span>
+             <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4">
+                <button 
+                  onClick={handleExportBackup} 
+                  className="bg-slate-50 border border-slate-200 p-3 sm:p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-slate-100 hover:border-slate-300 transition-colors active:scale-95"
+                >
+                   <FileJson size={24} className="text-slate-500 sm:w-6 sm:h-6"/>
+                   <span className="text-xs sm:text-sm font-bold text-slate-600">Exportar</span>
                 </button>
-                <button onClick={handleImportClick} className="bg-slate-50 border border-slate-200 p-3 rounded-xl flex flex-col items-center gap-2 active:bg-slate-100">
-                   <Upload size={20} className="text-slate-500"/>
-                   <span className="text-xs font-bold text-slate-600">Importar Datos</span>
+                <button 
+                  onClick={handleImportClick} 
+                  className="bg-slate-50 border border-slate-200 p-3 sm:p-4 rounded-xl flex flex-col items-center gap-2 hover:bg-slate-100 hover:border-slate-300 transition-colors active:scale-95"
+                >
+                   <Upload size={24} className="text-slate-500 sm:w-6 sm:h-6"/>
+                   <span className="text-xs sm:text-sm font-bold text-slate-600">Importar</span>
                 </button>
                 {/* Hidden File Input */}
                 <input 
@@ -206,9 +225,9 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
                   className="hidden" 
                 />
              </div>
-             <div className="mt-2 flex items-start gap-2 bg-yellow-50 p-2 rounded-lg">
-                <AlertTriangle size={14} className="text-yellow-600 shrink-0 mt-0.5"/>
-                <p className="text-[10px] text-yellow-700 leading-tight">
+             <div className="flex items-start gap-2 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                <AlertTriangle size={16} className="text-yellow-600 shrink-0 mt-0.5"/>
+                <p className="text-xs sm:text-sm text-yellow-700 leading-relaxed">
                   Tus datos se guardan solo en este dispositivo. Exporta una copia frecuentemente para evitar pérdidas.
                 </p>
              </div>
@@ -217,15 +236,17 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
           {/* Notification Settings */}
           <div 
              onClick={notificationStatus !== 'granted' ? requestNotificationPermission : undefined}
-             className={`bg-white border border-slate-100 p-4 rounded-2xl flex items-center justify-between shadow-sm transition-colors ${notificationStatus !== 'granted' ? 'active:bg-slate-50 cursor-pointer' : ''}`}
+             className={`bg-white border border-slate-200 p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl flex items-center justify-between shadow-sm transition-colors ${
+               notificationStatus !== 'granted' ? 'hover:bg-slate-50 cursor-pointer active:bg-slate-100' : ''
+             }`}
           >
-             <div className="flex items-center gap-3">
-               <div className={`p-2 rounded-xl ${notificationStatus === 'granted' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
-                 {notificationStatus === 'granted' ? <Bell size={24} /> : <BellOff size={24} />}
+             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+               <div className={`p-2 sm:p-3 rounded-xl shrink-0 ${notificationStatus === 'granted' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
+                 {notificationStatus === 'granted' ? <Bell size={24} className="sm:w-6 sm:h-6" /> : <BellOff size={24} className="sm:w-6 sm:h-6" />}
                </div>
-               <div className="flex-1">
-                 <div className="font-bold text-sm text-slate-800">Notificaciones</div>
-                 <div className="text-[10px] text-slate-400 leading-tight">
+               <div className="flex-1 min-w-0">
+                 <div className="font-bold text-sm sm:text-base text-slate-800 mb-1">Notificaciones</div>
+                 <div className="text-xs sm:text-sm text-slate-500 leading-relaxed">
                    {notificationStatus === 'granted' 
                      ? 'Te avisaremos si tienes cotizaciones antiguas sin cobrar.' 
                      : 'Actívalas para recordarte de cobrar cotizaciones pendientes.'}
@@ -235,50 +256,92 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
              {notificationStatus !== 'granted' && (
                <button 
                  onClick={(e) => { e.stopPropagation(); requestNotificationPermission(); }}
-                 className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-xs font-bold ml-2 shrink-0"
+                 className="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs sm:text-sm font-bold ml-2 shrink-0 hover:bg-slate-800 transition-colors"
                >
                  Activar
                </button>
              )}
              {notificationStatus === 'granted' && (
-                <div className="bg-green-100 text-green-700 p-1 rounded-full ml-2 shrink-0"><Check size={16} /></div>
+                <div className="bg-green-100 text-green-700 p-2 rounded-full ml-2 shrink-0">
+                  <Check size={18} className="sm:w-5 sm:h-5" />
+                </div>
              )}
           </div>
 
-          <div className="flex flex-col items-center pt-2">
-             <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-200 relative">
-                {profile.logo ? <img src={profile.logo} className="w-full h-full object-cover" alt="Logo" /> : <span className="text-xs text-slate-300">Logo</span>}
-                <input type="file" accept="image/*" onChange={handleLogo} className="absolute inset-0 opacity-0 cursor-pointer" />
+          {/* Profile Form */}
+          <div className="bg-white border border-slate-200 p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl shadow-sm lg:col-span-2">
+             <h2 className="font-bold text-base sm:text-lg text-slate-800 mb-4 sm:mb-6">Información del Negocio</h2>
+             
+             <div className="flex flex-col items-center pt-2 mb-6">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-slate-50 rounded-full flex items-center justify-center overflow-hidden border-2 border-dashed border-slate-300 relative hover:border-slate-400 transition-colors cursor-pointer">
+                   {profile.logo ? (
+                     <img src={profile.logo} className="w-full h-full object-cover" alt="Logo" />
+                   ) : (
+                     <span className="text-xs sm:text-sm text-slate-400">Logo</span>
+                   )}
+                   <input type="file" accept="image/*" onChange={handleLogo} className="absolute inset-0 opacity-0 cursor-pointer" />
+                </div>
+                <div className="text-xs sm:text-sm text-slate-500 mt-3">Toca para subir logo</div>
              </div>
-             <div className="text-xs text-slate-400 mt-2">Toca para subir logo</div>
-          </div>
-          
-          <Input label="Nombre del Negocio" value={profile.name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ name: e.target.value})} />
-          <Input label="Eslogan o Giro" value={profile.slogan} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ slogan: e.target.value})} />
-          <div className="flex gap-4">
-            <Input className="flex-1" label="Teléfono" value={profile.phone} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ phone: e.target.value})} />
-            <Input className="flex-1" label="Ciudad" placeholder="Ej. CDMX" value={profile.city || ''} onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ city: e.target.value})} />
-          </div>
-          
-          <div>
-             <label className="text-xs font-bold text-slate-400 uppercase ml-1">Términos y Condiciones (Pie de página)</label>
-             <textarea className="w-full bg-white border border-slate-200 rounded-xl p-3 h-24 text-sm mt-1 outline-none focus:border-indigo-400 no-scrollbar resize-none" 
-               value={profile.terms} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateProfile({ terms: e.target.value})} />
-          </div>
-          <div>
-             <label className="text-xs font-bold text-slate-400 uppercase ml-1 mb-2 block">Color de Marca</label>
-             <div className="flex gap-3 overflow-x-auto py-2 no-scrollbar">
-               {colors.map(c => (
-                 <button key={c} onClick={() => updateProfile({ color: c})} style={{backgroundColor: c}}
-                   className={`w-10 h-10 rounded-full shrink-0 ${profile.color === c ? 'ring-4 ring-slate-200 scale-110' : 'hover:scale-105'} transition-all`} 
-                   title={c === '#000000' ? 'Negro (Sin Color)' : ''}
+             
+             <div className="space-y-4 sm:space-y-5">
+               <Input 
+                 label="Nombre del Negocio" 
+                 value={profile.name} 
+                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ name: e.target.value})} 
+               />
+               <Input 
+                 label="Eslogan o Giro" 
+                 value={profile.slogan || ''} 
+                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ slogan: e.target.value})} 
+               />
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <Input 
+                   label="Teléfono" 
+                   value={profile.phone} 
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ phone: e.target.value})} 
                  />
-               ))}
+                 <Input 
+                   label="Ciudad" 
+                   placeholder="Ej. CDMX" 
+                   value={profile.city || ''} 
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateProfile({ city: e.target.value})} 
+                 />
+               </div>
+               
+               <div>
+                  <label className="text-xs sm:text-sm font-bold text-slate-400 uppercase ml-1 mb-2 block">Términos y Condiciones (Pie de página)</label>
+                  <textarea 
+                    className="w-full bg-white border-2 border-slate-200 rounded-xl p-3 sm:p-4 h-32 sm:h-36 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50 transition-all resize-none" 
+                    value={profile.terms || ''} 
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => updateProfile({ terms: e.target.value})} 
+                    placeholder="Ingresa los términos y condiciones que aparecerán en tus cotizaciones..."
+                  />
+               </div>
+               
+               <div>
+                  <label className="text-xs sm:text-sm font-bold text-slate-400 uppercase ml-1 mb-3 block">Color de Marca</label>
+                  <div className="flex gap-3 sm:gap-4 overflow-x-auto py-2 no-scrollbar">
+                    {colors.map(c => (
+                      <button 
+                        key={c} 
+                        onClick={() => updateProfile({ color: c})} 
+                        style={{backgroundColor: c}}
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0 transition-all ${
+                          profile.color === c 
+                            ? 'ring-4 ring-slate-300 scale-110 shadow-lg' 
+                            : 'hover:scale-105 hover:shadow-md'
+                        }`} 
+                        title={c === '#000000' ? 'Negro (Sin Color)' : ''}
+                      />
+                    ))}
+                  </div>
+               </div>
              </div>
           </div>
-          <div className="h-10"></div>
+          <div className="h-20 lg:hidden"></div>
        </div>
-       <NavBar view={view} setView={setView} />
+      
     </Screen>
   );
 };

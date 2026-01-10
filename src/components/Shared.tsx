@@ -3,18 +3,22 @@ import { Home, Book, Plus, FileText, User } from 'lucide-react';
 import { ViewState } from '../types';
 
 // --- SCREEN WRAPPER ---
-// Mejora: Responsive design - se ve bien en móvil y desktop
+// Diseño completamente responsive - en móvil ocupa todo el espacio disponible
 export const Screen: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = "" }) => (
-  <div className="min-h-screen bg-gray-200 flex justify-center items-start">
-    <main className={`
-      w-full max-w-md lg:max-w-5xl min-h-[100dvh] bg-gray-50 text-slate-800 font-sans 
-      pb-28 pt-[env(safe-area-inset-top)] 
-      relative shadow-2xl overflow-x-hidden selection:bg-indigo-100 selection:text-indigo-900
-      ${className}
-    `}>
+  <main className={`
+    flex-1 min-h-screen bg-gray-50 text-slate-800 font-sans
+    px-0 sm:px-4 md:px-6 lg:px-12 xl:px-16
+    pb-20 sm:pb-24 lg:pb-6
+    pt-20 sm:pt-20 md:pt-20 lg:pt-6
+    safe-top safe-bottom
+    relative overflow-x-hidden overflow-y-auto
+    selection:bg-indigo-100 selection:text-indigo-900
+    ${className}
+  `}>
+    <div className="w-full lg:max-w-7xl lg:mx-auto">
       {children}
-    </main>
-  </div>
+    </div>
+  </main>
 );
 
 // --- NAVIGATION BUTTON ---
@@ -50,19 +54,22 @@ interface NavBarProps {
   setView: (view: ViewState) => void;
 }
 
-// Mejora: Alineación centrada en desktop también
+// --- TOP NAV (Tablet - ya no usado en el nuevo diseño, pero lo mantenemos por compatibilidad) ---
+export const TopNav: React.FC<NavBarProps> = ({ view, setView }) => null;
+
+// --- NAVIGATION BAR (Mobile / Small screens) ---
 export const NavBar: React.FC<NavBarProps> = ({ view, setView }) => (
-  <div className="fixed bottom-0 left-0 w-full flex justify-center z-50 pointer-events-none">
-    <nav className="w-full max-w-md lg:max-w-5xl bg-white/90 backdrop-blur-md border-t border-slate-200/60 px-2 py-2 flex justify-around items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-[env(safe-area-inset-bottom)] pointer-events-auto">
+  <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none lg:hidden">
+    <nav className="w-full bg-white/95 backdrop-blur-lg border-t border-slate-200/80 px-2 py-2 flex justify-around items-center shadow-[0_-4px_20px_-2px_rgba(0,0,0,0.1)] safe-bottom pointer-events-auto">
       <NavBtn icon={<Home size={22} />} label="Inicio" active={view === 'home'} onClick={() => setView('home')} />
       <NavBtn icon={<Book size={22} />} label="Catálogo" active={view === 'catalog'} onClick={() => setView('catalog')} />
       
       {/* Botón Flotante Central (FAB) */}
-      <div className="relative -top-8 group">
+      <div className="relative -top-10 group">
         <button 
           onClick={() => setView('editor_new')}
           aria-label="Nueva Cotización"
-          className="bg-slate-900 text-white w-14 h-14 rounded-full shadow-xl shadow-slate-900/30 flex items-center justify-center active:scale-90 transition-all duration-300 border-4 border-gray-50 group-hover:-translate-y-1"
+          className="bg-slate-900 text-white w-16 h-16 rounded-full shadow-2xl shadow-slate-900/40 flex items-center justify-center active:scale-90 transition-all duration-300 border-4 border-white group-hover:-translate-y-1"
         >
           <Plus size={28} strokeWidth={2.5} />
         </button>

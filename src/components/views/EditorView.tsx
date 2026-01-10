@@ -89,78 +89,92 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
   const units = ['pza', 'm²', 'ml', 'kg', 'lt', 'srv', 'lote', 'caja', 'paq'];
 
   return (
-    <Screen className="bg-white">
+    <Screen className="bg-white py-0 sm:py-4 md:py-6 lg:py-8">
       <datalist id="client-suggestions">
         {clientSuggestions.map((client, idx) => (
           <option key={idx} value={client} />
         ))}
       </datalist>
 
-      <div className="sticky top-0 bg-white z-30 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
-        <button onClick={() => setView('home')} className="p-2 -ml-2"><ChevronLeft size={24}/></button>
-        <span className="font-bold text-slate-800 text-sm">{isEditing ? 'Editar' : 'Nueva'}</span>
-        <div className="flex gap-2">
-           <button onClick={() => setShowTemplatesModal(true)} className="bg-orange-50 text-orange-600 p-2 rounded-xl" title="Plantillas"><LayoutTemplate size={20}/></button>
-           <button onClick={() => setShowCatalogModal(true)} className="bg-indigo-50 text-indigo-600 p-2 rounded-xl" title="Catálogo"><Book size={20}/></button>
+      {/* Header - Responsive - Sin padding lateral en móvil */}
+      <div className="sticky top-0 lg:relative bg-white z-30 px-4 sm:px-6 lg:px-0 py-3 lg:py-0 mb-4 lg:mb-6 border-b lg:border-b-0 border-slate-100 flex justify-between items-center lg:block">
+        <div className="flex items-center justify-between w-full lg:w-auto lg:mb-6">
+          <button onClick={() => setView('home')} className="p-2 -ml-2 lg:hidden hover:bg-slate-100 rounded-lg transition-colors">
+            <ChevronLeft size={24}/>
+          </button>
+          <h1 className="font-bold text-lg sm:text-xl lg:text-2xl text-slate-800">
+            {isEditing ? 'Editar Cotización' : 'Nueva Cotización'}
+          </h1>
+          <div className="flex gap-2">
+             <button onClick={() => setShowTemplatesModal(true)} className="bg-orange-50 text-orange-600 p-2 rounded-xl hover:bg-orange-100 transition-colors" title="Plantillas">
+               <LayoutTemplate size={20}/>
+             </button>
+             <button onClick={() => setShowCatalogModal(true)} className="bg-indigo-50 text-indigo-600 p-2 rounded-xl hover:bg-indigo-100 transition-colors" title="Catálogo">
+               <Book size={20}/>
+             </button>
+          </div>
         </div>
       </div>
       
-      <div className="p-5 space-y-6">
-        <section>
-          <div className="text-xs font-bold text-slate-400 uppercase mb-2">Datos Generales</div>
-          
-          <div className="flex gap-3 mb-4">
-            <div className="flex-[2]">
-              <Input 
-                className="mb-0"
-                label="Título (Opcional)"
-                placeholder="Ej. Baño" 
-                value={activeQuote.title || ''} 
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setActiveQuote({...activeQuote, title: e.target.value})}
-              />
+      {/* Main Content - Responsive Grid Layout - Con padding solo en móvil */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-0">
+        {/* Left Column - Form Fields */}
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          <section className="bg-white p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm">
+            <div className="text-xs sm:text-sm font-bold text-slate-400 uppercase mb-4">Datos Generales</div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div className="sm:col-span-2">
+                <Input 
+                  className="mb-0"
+                  label="Título (Opcional)"
+                  placeholder="Ej. Baño" 
+                  value={activeQuote.title || ''} 
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setActiveQuote({...activeQuote, title: e.target.value})}
+                />
+              </div>
+              <div>
+                 <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 ml-1">Fecha</label>
+                 <div className="relative">
+                    <input 
+                      type="date"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:border-indigo-400 transition-all shadow-sm"
+                      value={activeQuote.date.split('T')[0]}
+                      onChange={handleDateChange}
+                    />
+                 </div>
+              </div>
             </div>
-            <div className="flex-1">
-               <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 ml-1">Fecha</label>
-               <div className="relative">
-                  <input 
-                    type="date"
-                    className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-sm outline-none focus:ring-2 focus:border-indigo-400 transition-all shadow-sm"
-                    value={activeQuote.date.split('T')[0]}
-                    onChange={handleDateChange}
-                  />
-               </div>
+            
+            <Input 
+              label="Nombre del Cliente"
+              placeholder="Ej. Juan Pérez" 
+              value={activeQuote.client} 
+              list="client-suggestions"
+              autoComplete="off"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setActiveQuote({...activeQuote, client: e.target.value});
+                if (errors.client) setErrors(prev => ({...prev, client: undefined}));
+              }}
+              error={errors.client}
+            />
+            
+            <Input 
+              label="Teléfono"
+              type="tel" 
+              placeholder="55 1234 5678" 
+              value={activeQuote.phone} 
+              onChange={handlePhoneChange} 
+              error={errors.phone}
+              inputMode="numeric"
+            />
+          </section>
+          <section className="bg-white p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+               <div className="text-xs sm:text-sm font-bold text-slate-400 uppercase">Conceptos</div>
+               <span className="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-600 font-medium">{activeQuote.items.length} items</span>
             </div>
-          </div>
-          
-          <Input 
-            label="Nombre del Cliente"
-            placeholder="Ej. Juan Pérez" 
-            value={activeQuote.client} 
-            list="client-suggestions"
-            autoComplete="off"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setActiveQuote({...activeQuote, client: e.target.value});
-              if (errors.client) setErrors(prev => ({...prev, client: undefined}));
-            }}
-            error={errors.client}
-          />
-          
-          <Input 
-            label="Teléfono"
-            type="tel" 
-            placeholder="55 1234 5678" 
-            value={activeQuote.phone} 
-            onChange={handlePhoneChange} 
-            error={errors.phone}
-            inputMode="numeric"
-          />
-        </section>
-        <section>
-          <div className="flex justify-between items-center mb-2">
-             <div className="text-xs font-bold text-slate-400 uppercase">Conceptos</div>
-             <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-500">{activeQuote.items.length} items</span>
-          </div>
-          <div className="space-y-3">
+            <div className="space-y-3 sm:space-y-4">
             {activeQuote.items.map((item, index) => (
               <div key={item.id} className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                 <div className="flex gap-2 mb-2">
@@ -237,12 +251,16 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
               </div>
             ))}
           </div>
-          <button onClick={() => setActiveQuote({...activeQuote, items: [...activeQuote.items, { id: generateId(), qty: 1, unit: 'pza', desc: '', price: '' }]})}
-            className="w-full mt-3 py-3 rounded-xl border-2 border-dashed border-slate-200 text-slate-400 font-bold text-sm flex items-center justify-center gap-2 active:bg-slate-50"><Plus size={18} /> Agregar Concepto</button>
-        </section>
+            <button 
+              onClick={() => setActiveQuote({...activeQuote, items: [...activeQuote.items, { id: generateId(), qty: 1, unit: 'pza', desc: '', price: '' }]})}
+              className="w-full mt-4 py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-bold text-sm flex items-center justify-center gap-2 hover:bg-slate-50 hover:border-slate-400 transition-colors active:scale-95"
+            >
+              <Plus size={18} /> Agregar Concepto
+            </button>
+          </section>
 
-        {/* Taxes and Discounts */}
-        <section className="rounded-2xl border border-slate-100 overflow-hidden">
+          {/* Taxes and Discounts */}
+          <section className="bg-white rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
            <button 
              onClick={() => setShowAdjustments(!showAdjustments)}
              className={`w-full p-4 flex justify-between items-center text-left transition-colors ${showAdjustments ? 'bg-slate-50 border-b border-slate-100' : 'bg-white'}`}
@@ -301,8 +319,8 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
            )}
         </section>
 
-        {/* Signature Section */}
-        <section className="rounded-2xl border border-slate-100 bg-white p-4">
+          {/* Signature Section */}
+          <section className="bg-white rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
            <div className="flex justify-between items-center mb-3">
              <div className="text-xs font-bold text-slate-400 uppercase">Firma del Cliente</div>
              {activeQuote.signature && (
@@ -324,15 +342,66 @@ const EditorView: React.FC<EditorViewProps> = ({ view, setView, quotes, activeQu
            )}
         </section>
 
-        <div className="h-24"></div>
+        </div>
+
+        {/* Right Column - Summary & Actions (Desktop) */}
+        <div className="lg:col-span-1">
+          <div className="lg:sticky lg:top-6 space-y-6">
+            {/* Summary Card */}
+            <div className="bg-white p-4 sm:p-6 rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm">
+              <h3 className="text-xs sm:text-sm font-bold text-slate-400 uppercase mb-4">Resumen</h3>
+              
+              <div className="space-y-3 mb-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600">Subtotal</span>
+                  <span className="font-medium text-slate-800">{money(subtotal)}</span>
+                </div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between text-sm text-orange-600">
+                    <span>Descuento ({activeQuote.discountRate}%)</span>
+                    <span className="font-medium">-{money(discountAmount)}</span>
+                  </div>
+                )}
+                {taxAmount > 0 && (
+                  <div className="flex justify-between text-sm text-slate-600">
+                    <span>Impuestos ({activeQuote.taxRate}%)</span>
+                    <span className="font-medium">{money(taxAmount)}</span>
+                  </div>
+                )}
+                <div className="border-t border-slate-200 pt-3 flex justify-between">
+                  <span className="text-base font-bold text-slate-800">Total</span>
+                  <span className="text-xl font-bold text-slate-900">{money(finalTotal)}</span>
+                </div>
+              </div>
+
+              {/* Save Button - Desktop */}
+              <button 
+                onClick={handleSave} 
+                className="w-full bg-slate-900 text-white py-3 px-4 rounded-xl font-bold text-sm sm:text-base flex justify-center items-center gap-2 hover:bg-slate-800 transition-colors active:scale-95 shadow-lg"
+              >
+                <Check size={20} /> Guardar Cotización
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-4 pb-[env(safe-area-inset-bottom)] z-40 shadow-2xl">
+
+      {/* Mobile save action (visible solo en pantallas pequeñas) */}
+      <div className="fixed bottom-0 left-0 right-0 lg:hidden bg-white border-t border-slate-200 p-4 safe-bottom z-40 shadow-2xl">
          <div className="flex justify-between items-center mb-3">
             <span className="text-xs font-bold text-slate-400 uppercase">Total Final</span>
-            <span className="text-2xl font-bold text-slate-900">{money(finalTotal)}</span>
+            <span className="text-xl sm:text-2xl font-bold text-slate-900">{money(finalTotal)}</span>
          </div>
-         <button onClick={handleSave} className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-lg flex justify-center items-center gap-2 active:scale-95 transition-transform"><Check size={20} /> Guardar</button>
+         <button 
+           onClick={handleSave} 
+           className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold text-base flex justify-center items-center gap-2 active:scale-95 transition-transform shadow-lg"
+         >
+           <Check size={20} /> Guardar
+         </button>
       </div>
+
+      {/* Spacer for mobile bottom bar */}
+      <div className="h-24 lg:hidden"></div>
 
       {showTemplatesModal && (
         <TemplatesModal 

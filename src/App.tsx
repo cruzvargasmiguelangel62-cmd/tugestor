@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from './db';
 import { Profile, CatalogItem, Quote, ViewState, QuoteStatus } from './types';
+import { Home, Book, Plus, FileText, User } from 'lucide-react';
 import { generateId, calculateSubtotal } from './utils';
 import { DEFAULT_PROFILE } from './constants';
 
@@ -12,6 +13,7 @@ import CatalogView from './components/views/CatalogView';
 import HistoryView from './components/views/HistoryView';
 import PreviewView from './components/views/PreviewView';
 import SettingsView from './components/views/SettingsView';
+import { TopNav, NavBar } from './components/Shared';
 
 // Tipado para el evento de instalación PWA
 interface BeforeInstallPromptEvent extends Event {
@@ -21,7 +23,8 @@ interface BeforeInstallPromptEvent extends Event {
 
 const App = () => {
   const [view, setView] = useState<ViewState>('home'); 
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const installPromptRef = useRef<BeforeInstallPromptEvent | null>(null);
+  const [installAvailable, setInstallAvailable] = useState(false);
   const [activeQuote, setActiveQuote] = useState<Quote | null>(null);
 
   // --- DATABASE QUERIES (REACTIVE) ---
@@ -47,11 +50,19 @@ const App = () => {
   // 1. PWA Install Prompt
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevenir el banner automático del navegador
       e.preventDefault();
-      setInstallPrompt(e as BeforeInstallPromptEvent);
+      // Guardar el evento para usarlo cuando el usuario quiera instalar
+      installPromptRef.current = e as BeforeInstallPromptEvent;
+      setInstallAvailable(true);
     };
+    
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
+    // Limpiar el listener al desmontar
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
   }, []);
 
   // 2. Notificaciones de Cotizaciones Pendientes
@@ -127,15 +138,33 @@ const App = () => {
 
   // --- HANDLERS ---
 
-  const handleInstallClick = useCallback(() => {
-    if (!installPrompt) return;
-    installPrompt.prompt();
-    installPrompt.userChoice.then((choiceResult) => {
+  const handleInstallClick = useCallback(async () => {
+    const promptEvent = installPromptRef.current;
+    if (!promptEvent) {
+      console.warn('No hay prompt de instalación disponible');
+      return;
+    }
+    
+    try {
+      // Mostrar el prompt de instalación
+      await promptEvent.prompt();
+      
+      // Esperar la respuesta del usuario
+      const choiceResult = await promptEvent.userChoice;
+      
       if (choiceResult.outcome === 'accepted') {
-        setInstallPrompt(null);
+        console.log('Usuario aceptó la instalación');
+        installPromptRef.current = null;
+        setInstallAvailable(false);
+      } else {
+        console.log('Usuario rechazó la instalación');
       }
-    });
-  }, [installPrompt]);
+    } catch (error) {
+      console.error('Error al mostrar el prompt de instalación:', error);
+      installPromptRef.current = null;
+      setInstallAvailable(false);
+    }
+  }, []);
 
   const saveQuote = async () => {
     if (!activeQuote) return;
@@ -264,7 +293,7 @@ const App = () => {
             setView={setView} 
             profile={profile} 
             setProfile={() => {}} 
-            installPrompt={installPrompt} 
+            installAvailable={installAvailable}
             onInstall={handleInstallClick} 
           />
         );
@@ -276,9 +305,97 @@ const App = () => {
   };
 
   return (
-    <>
-      {renderContent()}
-    </>
+    <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+      {/* Desktop Sidebar - Visible solo en pantallas grandes */}
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 xl:w-72 lg:h-screen lg:sticky lg:top-0 bg-white border-r border-slate-200 shadow-sm">
+        <div className="p-6 border-b border-slate-200">
+          <h1 className="text-xl font-bold text-slate-900 truncate">{profile.name || 'Mi Negocio'}</h1>
+          <p className="text-xs text-slate-500 mt-1 truncate">{profile.slogan || 'Cotizador Profesional'}</p>
+        </div>
+        
+        <nav className="flex-1 flex flex-col gap-1 p-4 overflow-y-auto">
+          <button 
+            onClick={() => setView('home')} 
+            className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+              view === 'home' 
+                ? 'bg-slate-900 text-white shadow-md' 
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Home size={20} /> 
+            <span className="font-medium">Inicio</span>
+          </button>
+          <button 
+            onClick={() => setView('catalog')} 
+            className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+              view === 'catalog' 
+                ? 'bg-slate-900 text-white shadow-md' 
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <Book size={20} /> 
+            <span className="font-medium">Catálogo</span>
+          </button>
+          <button 
+            onClick={() => setView('history')} 
+            className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+              view === 'history' 
+                ? 'bg-slate-900 text-white shadow-md' 
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <FileText size={20} /> 
+            <span className="font-medium">Historial</span>
+          </button>
+          <button 
+            onClick={() => setView('settings')} 
+            className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
+              view === 'settings' 
+                ? 'bg-slate-900 text-white shadow-md' 
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <User size={20} /> 
+            <span className="font-medium">Perfil</span>
+          </button>
+        </nav>
+        
+        <div className="p-4 border-t border-slate-200">
+          <button 
+            onClick={() => setView('editor_new')} 
+            className="w-full bg-slate-900 text-white py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-medium shadow-lg hover:bg-slate-800 transition-colors active:scale-95"
+          >
+            <Plus size={18} strokeWidth={2.5} /> 
+            Nueva cotización
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Header - Visible solo en pantallas pequeñas - Compacto */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200 shadow-sm safe-top">
+        <div className="px-3 sm:px-4 md:px-6 pt-3 pb-2.5 sm:pt-4 sm:pb-3 md:pt-5 md:pb-3 flex items-center justify-between">
+          <div className="min-w-0 flex-1 pr-2">
+            <h1 className="text-base sm:text-lg font-bold text-slate-900 truncate leading-tight">{profile.name || 'Mi Negocio'}</h1>
+            <p className="text-[10px] sm:text-xs text-slate-500 truncate leading-tight mt-0.5">{profile.slogan || 'Cotizador Profesional'}</p>
+          </div>
+          <button 
+            onClick={() => setView('editor_new')}
+            className="bg-slate-900 text-white w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-md flex items-center justify-center active:scale-95 transition-transform shrink-0"
+            aria-label="Nueva Cotización"
+          >
+            <Plus size={18} strokeWidth={2.5} className="sm:w-5 sm:h-5" />
+          </button>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
+        {renderContent()}
+      </div>
+
+      {/* Mobile Navigation Bar - Visible solo en pantallas pequeñas */}
+      <NavBar view={view} setView={setView} />
+    </div>
   );
 };
 

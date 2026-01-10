@@ -213,28 +213,35 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
   const isPaid = activeQuote.status === 'pagada';
 
   return (
-    <Screen className="bg-slate-200">
-      <div className="bg-white px-3 py-3 shadow-sm flex justify-between items-center sticky top-0 z-20 no-print">
-         <button onClick={() => setView('history')} className="flex items-center gap-1 text-sm font-bold text-slate-600 mr-2">
+    <Screen className="bg-slate-100 lg:bg-slate-50 py-0 sm:py-4 md:py-6 lg:py-8">
+      {/* Header - Responsive - Sin padding lateral en móvil */}
+      <div className="bg-white px-4 sm:px-6 py-3 lg:py-4 shadow-sm sm:rounded-xl lg:rounded-2xl mb-4 lg:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sticky top-0 lg:relative z-20 no-print border border-slate-200">
+         <button 
+           onClick={() => setView('history')} 
+           className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors lg:hidden"
+         >
             <ChevronLeft size={24}/> 
-            <span className="hidden sm:inline">Volver</span>
+            <span>Volver</span>
          </button>
          
-         <div className="flex gap-2 items-center overflow-x-auto no-scrollbar">
+         <div className="flex flex-wrap gap-2 sm:gap-3 items-center w-full sm:w-auto">
             <button 
               onClick={onToggleStatus}
-              className={`flex shrink-0 items-center gap-1 px-3 py-2 rounded-full text-[10px] font-bold transition-all ${isPaid ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}
+              className={`flex shrink-0 items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all ${
+                isPaid ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
+              }`}
             >
-              {isPaid ? <CheckCircle2 size={14} /> : <Circle size={14} />}
-              {isPaid ? 'PAGADA' : 'PENDIENTE'}
+              {isPaid ? <CheckCircle2 size={16} /> : <Circle size={16} />}
+              <span className="hidden sm:inline">{isPaid ? 'PAGADA' : 'PENDIENTE'}</span>
+              <span className="sm:hidden">{isPaid ? 'PAG' : 'PEND'}</span>
             </button>
 
-            <div className="w-px h-6 bg-slate-100 mx-1 shrink-0"></div>
+            <div className="w-px h-6 bg-slate-200 shrink-0"></div>
 
             <button 
               onClick={handleQuickWhatsApp} 
-              className="bg-green-600 text-white p-2 rounded-full shadow-sm active:scale-95 transition-transform shrink-0"
-              title="WhatsApp Rápido (Texto)"
+              className="bg-green-600 text-white p-2.5 sm:p-3 rounded-full shadow-md hover:bg-green-700 active:scale-95 transition-all shrink-0"
+              title="WhatsApp Rápido"
             >
               <MessageCircle size={20} />
             </button>
@@ -242,17 +249,27 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
             <button 
               onClick={() => setShowShareModal(true)} 
               disabled={isGenerating}
-              className="bg-indigo-600 text-white px-3 py-2 rounded-full shadow-md shadow-indigo-200 active:scale-95 transition-all flex items-center gap-2 font-bold text-xs whitespace-nowrap shrink-0" 
+              className="bg-indigo-600 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-indigo-700 active:scale-95 transition-all flex items-center gap-2 font-bold text-xs sm:text-sm whitespace-nowrap shrink-0" 
               title="Compartir PDF"
             >
-              {isGenerating ? <Loader2 size={16} className="animate-spin"/> : <><Share2 size={16}/> PDF</>}
+              {isGenerating ? <Loader2 size={18} className="animate-spin"/> : <><Share2 size={18}/> <span className="hidden sm:inline">Compartir PDF</span><span className="sm:hidden">PDF</span></>}
+            </button>
+
+            <button 
+              onClick={handleDownloadPDF}
+              disabled={isGenerating}
+              className="bg-slate-900 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-slate-800 active:scale-95 transition-all flex items-center gap-2 font-bold text-xs sm:text-sm whitespace-nowrap shrink-0"
+              title="Descargar PDF"
+            >
+              {isGenerating ? <Loader2 size={18} className="animate-spin"/> : <><Download size={18}/> <span className="hidden sm:inline">Descargar</span><span className="sm:hidden">PDF</span></>}
             </button>
          </div>
       </div>
 
-      <div className="flex justify-center p-4 overflow-auto no-print" ref={containerRef}>
+      {/* Preview Container - Responsive - Sin padding lateral en móvil */}
+      <div className="flex justify-center p-0 sm:p-4 md:p-6 lg:p-8 overflow-auto no-print bg-white sm:rounded-xl lg:rounded-2xl shadow-sm border border-slate-200 mx-0 sm:mx-0" ref={containerRef}>
         <div
-          className="bg-white shadow-xl relative"
+          className="bg-white shadow-2xl relative rounded-lg overflow-hidden"
           style={{
            width: '100%',
            maxWidth: containerMaxWidth || 816,
