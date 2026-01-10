@@ -22,19 +22,18 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
     const element = document.getElementById('print-area');
     if (!element) return null;
 
-    const originalDisplay = element.style.display;
-    element.style.display = 'block'; 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Esperar a que las imágenes estén cargadas (especialmente el logo)
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     const canvas = await html2canvas(element, {
-      scale: 2, 
+      scale: 3, // Mayor calidad para retina displays
       useCORS: true,
+      allowTaint: true,
       width: 816, 
       windowWidth: 816,
       backgroundColor: '#ffffff'
     });
     
-    element.style.display = originalDisplay;
     return canvas;
   };
 
@@ -78,44 +77,50 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
   };
 
   const onShareFileAction = async () => {
-     setIsGenerating(true);
-     try {
-        const pdfBlob = await generatePDFBlob();
-        if (!pdfBlob) return;
+    setIsGenerating(true);
+    try {
+      const pdfBlob = await generatePDFBlob();
+      if (!pdfBlob) throw new Error("Error generando PDF");
 
-        const cleanClient = activeQuote.client.replace(/[^a-z0-9]/gi, '_').substring(0, 15);
-        const fileName = `Cotizacion_${cleanClient}_${activeQuote.folio}.pdf`;
-        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+      const fileName = `Cotizacion_${activeQuote.folio}.pdf`;
+      const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-           const msg = `Hola ${activeQuote.client}, adjunto tu cotización #${activeQuote.folio}.`;
-           await navigator.share({
-             files: [file],
-             title: `Cotización #${activeQuote.folio}`,
-             text: msg
-           });
-           setShowShareModal(false);
-        } else {
-           alert("Tu dispositivo no soporta el envío directo de archivos. Usaremos la opción de descarga.");
-           const url = URL.createObjectURL(pdfBlob);
-           const a = document.createElement('a');
-           a.href = url;
-           a.download = fileName;
-           a.click();
-           
-           setTimeout(() => {
-             const phone = getCleanPhone();
-             const msg = `Hola ${activeQuote.client}, le envío su cotización #${activeQuote.folio}. (Archivo PDF descargado)`;
-             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-           }, 1000);
-           setShowShareModal(false);
+      // Intento 1: Web Share API (solo en móviles modernos con soporte)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: `Cotización #${activeQuote.folio}`,
+            text: `Hola ${activeQuote.client}, adjunto tu cotización.`
+          });
+          setShowShareModal(false);
+          return; // Éxito, salimos
+        } catch (shareError) {
+          // Si el usuario cancela, intentamos fallback
+          if ((shareError as Error).name !== 'AbortError') {
+            console.log("Share API fallida, descargando...");
+          }
         }
-     } catch (e) {
-        console.error(e);
-        alert("Error al intentar compartir. Intente descargando el PDF.");
-     } finally {
-        setIsGenerating(false);
-     }
+      }
+
+      // Intento 2: Fallback - Descarga Directa (PC o Safari)
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      alert("El PDF se ha descargado. Ahora puedes adjuntarlo en WhatsApp o enviarlo por email.");
+      setShowShareModal(false);
+    } catch (e) {
+      console.error(e);
+      alert("Error al generar el documento. Intenta descargarlo desde el botón PDF.");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const onShareLinkAction = async () => {
@@ -227,7 +232,12 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
          </div>
       </div>
 
-      <div id="print-area" className="hidden print:block bg-white text-slate-900" style={{ width: '816px', minHeight: '1056px' }}>
+      {/* Off-screen print area: visible a html2canvas pero no al usuario */}
+      <div 
+        id="print-area" 
+        className="fixed top-0 left-[-9999px] z-[-1] bg-white text-slate-900" 
+        style={{ width: '816px', minHeight: '1056px' }}
+      >
          <PrintContent activeQuote={activeQuote} profile={profile} />
       </div>
 
