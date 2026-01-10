@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Printer, Share2, Download, Loader2, CheckCircle2, Circle, MessageCircle } from 'lucide-react';
 import { Quote, Profile, ViewState } from '../../types';
 import { Screen } from '../Shared';
@@ -17,6 +17,21 @@ interface PreviewViewProps {
 const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile, onToggleStatus }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [scale, setScale] = useState<number>(0.8);
+
+  useEffect(() => {
+    const updateScale = () => {
+      const container = containerRef.current;
+      const available = container ? container.clientWidth - 24 : window.innerWidth - 24;
+      const newScale = Math.max(0.35, Math.min(1, available / 816));
+      setScale(newScale);
+    };
+
+    updateScale();
+    window.addEventListener('resize', updateScale);
+    return () => window.removeEventListener('resize', updateScale);
+  }, []);
 
   const getCanvas = async () => {
     const element = document.getElementById('print-area');
@@ -226,10 +241,18 @@ const PreviewView: React.FC<PreviewViewProps> = ({ setView, activeQuote, profile
          </div>
       </div>
 
-      <div className="flex justify-center p-4 overflow-auto no-print">
-         <div className="bg-white shadow-xl w-[816px] min-h-[1056px] relative origin-top scale-[0.4] sm:scale-[0.5] md:scale-[0.7] lg:scale-[0.85]">
-            <PrintContent activeQuote={activeQuote} profile={profile} />
-         </div>
+      <div className="flex justify-center p-4 overflow-auto no-print" ref={containerRef}>
+        <div
+          className="bg-white shadow-xl relative"
+          style={{
+           width: 816,
+           minHeight: 1056,
+           transform: `scale(${scale})`,
+           transformOrigin: 'top center'
+          }}
+        >
+          <PrintContent activeQuote={activeQuote} profile={profile} />
+        </div>
       </div>
 
       {/* Off-screen print area: visible a html2canvas pero no al usuario */}
