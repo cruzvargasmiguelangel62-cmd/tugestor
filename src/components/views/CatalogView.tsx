@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Trash2, X, PenTool, Check, Plus, Book } from 'lucide-react';
 import { CatalogItem, ViewState } from '../../types';
-import { Screen, NavBar } from '../Shared';
+import { Screen } from '../Shared';
 import { money, generateId } from '../../utils';
 import { db } from '../../db';
 
@@ -80,7 +80,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
        {/* Header - Con padding solo en móvil */}
-       <div className="mb-4 sm:mb-6 lg:mb-8 flex justify-between items-center px-4 sm:px-0">
+       <div className="mb-4 sm:mb-6 lg:mb-8 flex justify-between items-center px-4 sm:px-0 pt-2 sm:pt-0">
          <h1 className="font-bold text-xl sm:text-2xl lg:text-3xl text-slate-800">Catálogo de Productos</h1>
          <div className="bg-slate-900 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold">
            {catalog.length}
@@ -91,7 +91,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-0">
          {/* Left Column - Form */}
          <div className="lg:col-span-1">
-           <div className={`p-5 sm:p-6 rounded-xl lg:rounded-2xl shadow-lg transition-colors sticky top-6 ${editingId ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-white'}`}>
+           <div className={`p-5 sm:p-6 rounded-xl lg:rounded-2xl shadow-lg transition-colors sticky top-[80px] sm:top-6 ${editingId ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-white'}`}>
              <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                <div className="text-xs sm:text-sm font-bold opacity-90 uppercase flex items-center gap-2">
                  {editingId ? <><PenTool size={16}/> Editando Item</> : <><Plus size={16}/> Nuevo Item</>}
@@ -187,7 +187,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
            </div>
          </div>
        </div>
-       <div className="h-20 lg:hidden"></div>
+       <div className="h-24 lg:hidden"></div>
       
     </Screen>
   );

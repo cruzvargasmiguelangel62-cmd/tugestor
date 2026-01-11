@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Settings, Trash2, Copy, Search, X, FileText } from 'lucide-react';
 import { Quote, ViewState } from '../../types';
-import { Screen, NavBar } from '../Shared';
+import { Screen } from '../Shared';
 import { money, formatDate } from '../../utils';
 import { db } from '../../db';
 
@@ -38,7 +38,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
        {/* Header - Con padding solo en móvil */}
-       <div className="mb-4 sm:mb-6 lg:mb-8 px-4 sm:px-0">
+       <div className="mb-4 sm:mb-6 lg:mb-8 px-4 sm:px-0 pt-2 sm:pt-0">
          <div className="flex justify-between items-center mb-4">
            <h1 className="font-bold text-xl sm:text-2xl lg:text-3xl text-slate-800">Historial de Cotizaciones</h1>
            <div className="bg-slate-900 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold">
@@ -66,7 +66,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
        </div>
 
        {/* Quotes Grid - Responsive - Sin padding en móvil para aprovechar todo el espacio */}
-       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 px-4 sm:px-0">
+       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 px-4 sm:px-0 pb-4">
           {filteredQuotes.map(q => (
              <div 
                key={q.id} 
@@ -136,6 +136,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
            <div className="text-xs text-slate-300">Intenta con otros términos de búsqueda</div>
          </div>
        )}
+       <div className="h-24 lg:hidden"></div>
       
     </Screen>
   );
