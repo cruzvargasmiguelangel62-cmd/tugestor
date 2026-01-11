@@ -80,7 +80,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
        {/* Header - Con padding solo en móvil */}
-       <div className="mb-4 sm:mb-6 lg:mb-8 flex justify-between items-center px-4 sm:px-0 pt-2 sm:pt-0">
+       <div className="mb-4 sm:mb-6 lg:mb-8 flex justify-between items-center px-4 sm:px-0 pt-5 sm:pt-0">
          <h1 className="font-bold text-xl sm:text-2xl lg:text-3xl text-slate-800">Catálogo de Productos</h1>
          <div className="bg-slate-900 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold">
            {catalog.length}
@@ -88,10 +88,10 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
        </div>
 
        {/* Two Column Layout - Responsive - Sin padding en móvil */}
-       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4 sm:px-0">
+       <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 sm:gap-6 lg:gap-8 px-0 sm:px-0">
          {/* Left Column - Form */}
          <div className="lg:col-span-1">
-           <div className={`p-5 sm:p-6 rounded-xl lg:rounded-2xl shadow-lg transition-colors sticky top-[80px] sm:top-6 ${editingId ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-white'}`}>
+           <div className={`p-4 sm:p-6 rounded-none sm:rounded-xl lg:rounded-2xl shadow-lg transition-colors sticky top-[80px] sm:top-6 ${editingId ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-white'}`}>
              <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                <div className="text-xs sm:text-sm font-bold opacity-90 uppercase flex items-center gap-2">
                  {editingId ? <><PenTool size={16}/> Editando Item</> : <><Plus size={16}/> Nuevo Item</>}
@@ -178,7 +178,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
                 </div>
              ))}
              {catalog.length === 0 && (
-               <div className="text-center py-12 lg:py-16 bg-white rounded-xl border border-slate-200">
+               <div className="text-center py-12 lg:py-16 bg-white rounded-none sm:rounded-xl border-x-0 sm:border-x border-t border-b sm:border border-slate-200">
                  <Book size={48} className="mx-auto mb-3 text-slate-300"/>
                  <div className="text-slate-400 text-sm mb-1">El catálogo está vacío</div>
                  <div className="text-xs text-slate-300">Agrega productos para facilitar tus cotizaciones</div>

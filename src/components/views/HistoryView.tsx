@@ -38,7 +38,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
        {/* Header - Con padding solo en móvil */}
-       <div className="mb-4 sm:mb-6 lg:mb-8 px-4 sm:px-0 pt-2 sm:pt-0">
+       <div className="mb-4 sm:mb-6 lg:mb-8 px-4 sm:px-0 pt-5 sm:pt-0">
          <div className="flex justify-between items-center mb-4">
            <h1 className="font-bold text-xl sm:text-2xl lg:text-3xl text-slate-800">Historial de Cotizaciones</h1>
            <div className="bg-slate-900 text-white px-3 py-1.5 rounded-full text-xs sm:text-sm font-bold">
@@ -66,11 +66,11 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
        </div>
 
        {/* Quotes Grid - Responsive - Sin padding en móvil para aprovechar todo el espacio */}
-       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 px-4 sm:px-0 pb-4">
+       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-0 sm:gap-4 lg:gap-6 px-0 sm:px-0 pb-4">
           {filteredQuotes.map(q => (
              <div 
                key={q.id} 
-               className="bg-white p-4 sm:p-5 lg:p-6 rounded-xl lg:rounded-2xl border border-slate-200 shadow-sm hover:shadow-md cursor-pointer active:scale-[0.98] lg:active:scale-[0.99] transition-all relative overflow-hidden group"
+               className="bg-white p-4 sm:p-5 lg:p-6 rounded-none sm:rounded-xl lg:rounded-2xl border-x-0 sm:border-x border-t border-b sm:border border-slate-200 shadow-sm hover:shadow-md cursor-pointer active:scale-[0.98] lg:active:scale-[0.99] transition-all relative overflow-hidden group"
                onClick={() => { setActiveQuote(q); setView('preview'); }}
              >
                 {/* Status Indicator Stripe */}
@@ -130,7 +130,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
          </div>
        )}
        {quotes.length > 0 && filteredQuotes.length === 0 && (
-         <div className="text-center py-12 lg:py-16 bg-white sm:rounded-xl border border-slate-200 mt-6 mx-4 sm:mx-0">
+         <div className="text-center py-12 lg:py-16 bg-white rounded-none sm:rounded-xl border-x-0 sm:border-x border-t border-b sm:border border-slate-200 mt-6 mx-0 sm:mx-0">
            <Search size={48} className="mx-auto mb-3 text-slate-300"/>
            <div className="text-slate-400 text-sm mb-1">No se encontraron resultados</div>
            <div className="text-xs text-slate-300">Intenta con otros términos de búsqueda</div>
