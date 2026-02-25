@@ -162,7 +162,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
       {/* Header - Premium Look */}
-      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-6 sm:pt-0 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-2 sm:pt-0 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
           <h1 className="font-extrabold text-3xl lg:text-4xl text-slate-900 tracking-tight">Perfil y Ajustes</h1>
           <p className="text-slate-500 text-sm mt-1.5 font-medium italic">Personaliza tu identidad y gestiona tus datos</p>
@@ -330,8 +330,8 @@ const SettingsView: React.FC<SettingsViewProps> = ({ view, setView, profile, ins
                     onClick={() => updateProfile({ color: c })}
                     style={{ backgroundColor: c }}
                     className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0 transition-all ${profile.color === c
-                        ? 'ring-4 ring-slate-300 scale-110 shadow-lg'
-                        : 'hover:scale-105 hover:shadow-md'
+                      ? 'ring-4 ring-slate-300 scale-110 shadow-lg'
+                      : 'hover:scale-105 hover:shadow-md'
                       }`}
                     title={c === '#000000' ? 'Negro (Sin Color)' : ''}
                   />

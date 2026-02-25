@@ -80,7 +80,7 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
       {/* Header - Premium Look */}
-      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-6 sm:pt-0 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-2 sm:pt-0 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
           <h1 className="font-extrabold text-3xl lg:text-4xl text-slate-900 tracking-tight">Catálogo</h1>
           <p className="text-slate-500 text-sm mt-1.5 font-medium italic">Gestiona tus productos y servicios frecuentes</p>
@@ -159,8 +159,8 @@ const CatalogView: React.FC<CatalogViewProps> = ({ view, setView, catalog }) => 
                 key={item.id}
                 onClick={() => startEdit(item)}
                 className={`bg-white p-4 sm:p-5 rounded-xl lg:rounded-2xl shadow-sm border flex justify-between items-center cursor-pointer transition-all active:scale-[0.99] lg:hover:shadow-md ${editingId === item.id
-                    ? 'border-indigo-500 ring-2 ring-indigo-100 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
+                  ? 'border-indigo-500 ring-2 ring-indigo-100 bg-indigo-50'
+                  : 'border-slate-200 hover:border-slate-300'
                   }`}
               >
                 <div className="flex-1 min-w-0 pr-4">

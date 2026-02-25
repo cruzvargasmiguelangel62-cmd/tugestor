@@ -37,7 +37,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ view, setView, quotes, setAct
 
   return (
     <Screen className="py-0 sm:py-4 md:py-6 lg:py-8">
-      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-6 sm:pt-0">
+      <div className="mb-10 lg:mb-14 px-4 md:px-0 pt-2 sm:pt-0">
         <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-10">
           <div>
             <h1 className="font-extrabold text-3xl lg:text-4xl text-slate-900 tracking-tight">Historial</h1>

@@ -9,7 +9,7 @@ export const Screen: React.FC<{ children: React.ReactNode; className?: string }>
     flex-1 min-h-screen bg-gray-50 text-slate-800 font-sans
     px-0 sm:px-4 md:px-6 lg:px-12 xl:px-16
     pb-20 sm:pb-24 lg:pb-6
-    pt-20 md:pt-10 
+    pt-28 md:pt-10 
     safe-top safe-bottom
     relative overflow-x-hidden overflow-y-auto
     selection:bg-indigo-100 selection:text-indigo-900
